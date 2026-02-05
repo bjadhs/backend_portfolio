@@ -12,13 +12,19 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ debug: false });
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://bjadhs.github.io';
 
+// CORS - allow GitHub Pages and localhost
 const corsOptions = {
-  origin: NODE_ENV === 'production' ? FRONTEND_URL : true,
+  origin: [
+    'https://bjadhs.github.io',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ],
   credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
 };
 
 app.use(cors(corsOptions));
@@ -47,8 +53,4 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} (${NODE_ENV})`);
-  console.log(`API: http://localhost:${PORT}/api/contact`);
-  if (NODE_ENV === 'development') {
-    console.log(`Website: http://localhost:${PORT}`);
-  }
 });
