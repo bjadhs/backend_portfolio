@@ -15,30 +15,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// CORS - allow GitHub Pages and localhost
-const corsOptions = {
-  origin: [
-    'https://bjadhs.github.io',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-  ],
+// CORS - must be before all routes
+app.use(cors({
+  origin: ['https://bjadhs.github.io', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
-};
+}));
 
-app.use(cors(corsOptions));
+// Handle preflight
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/contact', contactRoutes);
 
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK',
-    environment: NODE_ENV,
-    timestamp: new Date().toISOString()
-  });
+  res.json({ status: 'OK', environment: NODE_ENV });
 });
 
 if (NODE_ENV === 'development') {
