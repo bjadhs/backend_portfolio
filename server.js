@@ -14,8 +14,8 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ debug: false });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.PORT || 3008;
+const NODE_ENV = process.env.NODE_ENV ;
 
 // Security: Helmet middleware
 app.use(helmet({
@@ -36,8 +36,6 @@ app.use(helmet({
 const allowedOrigins = [
   'https://bjadhs.github.io',
   'http://localhost:3000',
-  'http://localhost:5500',
-  'http://127.0.0.1:5500',
 ];
 
 app.use(cors({
@@ -70,6 +68,17 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     environment: NODE_ENV,
     timestamp: new Date().toISOString(),
+  });
+});
+
+// Resume download endpoint
+app.get('/api/resume', (req, res) => {
+  const resumePath = path.join(__dirname, 'BIJAYA_ADHIKARI_Resume_Feb4.pdf');
+  res.download(resumePath, 'Bijaya_Adhikari_Resume.pdf', (err) => {
+    if (err) {
+      console.error('Error downloading resume:', err);
+      res.status(500).json({ success: false, message: 'Error downloading resume' });
+    }
   });
 });
 
